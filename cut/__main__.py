@@ -2,16 +2,17 @@ import argparse
 
 def main():
     # create parser
-    parser = argparse.ArgumentParser(description="my version of cut program")
+    parser = argparse.ArgumentParser(description="My version of cut program")
     
     # add arguments
-    parser.add_argument("filepath", help="path to the file")
-    parser.add_argument("-f", "--fields", type=str, help="specify return fields")
+    parser.add_argument("filepath", help="Path to the file")
+    parser.add_argument("-f", "--fields", type=str, help="Specify return fields")
+    parser.add_argument("-d", "--delimiter", type=str, help="Specify the used  delimiter")    
     
     # parse arguments
     args = parser.parse_args()
 
-    delimiters = ["\t"]
+    delimiters = args.delimiter or "\t"
     fields = args.fields
     if fields != None:
         fields = fields.split(",")
@@ -29,7 +30,7 @@ def main():
     # read the file line by line
     with open(args.filepath, "r") as fh:
         for line in fh:
-            splitted_lines.append(line.strip().split(*delimiters))
+            splitted_lines.append(line.strip().split(delimiters))
     
     # no field specified
     if fields == None:
@@ -40,12 +41,15 @@ def main():
         return 0
     # print specified fields
     for line in splitted_lines:
+        print_new_line = True
         for i in fields:
             try:
                 print(line[i], end="\t")
-            except IndexError:
+            except Exception:
+                print_new_line = False
                 continue
-        print()
+        if print_new_line:
+            print()
     return 0
 if __name__ == "__main__":
     main()
