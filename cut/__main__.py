@@ -15,8 +15,11 @@ def main():
     delimiters = args.delimiter or "\t"
     fields = args.fields
     if fields != None:
-        fields = fields.split(",")
         try:
+            if "," not in fields:
+                fields = fields.split()
+            else:    
+                fields = fields.split(",")
             fields = [int(x) - 1 for x in fields]
             if min(fields) < 0:
                 raise ValueError
