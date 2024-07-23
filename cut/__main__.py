@@ -1,18 +1,26 @@
 import argparse
+from sys import stdin
 
 def main():
     # create parser
     parser = argparse.ArgumentParser(description="My version of cut program")
     
     # add arguments
-    parser.add_argument("filepath", help="Path to the file")
+    parser.add_argument("filepath", nargs="?", help="Path to the file")
     parser.add_argument("-f", "--fields", type=str, help="Specify return fields")
     parser.add_argument("-d", "--delimiter", type=str, help="Specify the used  delimiter")    
     
     # parse arguments
     args = parser.parse_args()
+    
+    data = args.filepath
+    read_from_file = True
+    # input method
+    if not data or data == "-":
+        read_from_file = False
+        data = stdin.read()
 
-    delimiters = args.delimiter or "\t"
+    delimiter = args.delimiter or "\t"
     fields = args.fields
     if fields != None:
         try:
@@ -29,11 +37,16 @@ def main():
 
     # splitted lines
     splitted_lines = []
-
-    # read the file line by line
-    with open(args.filepath, "r") as fh:
-        for line in fh:
-            splitted_lines.append(line.strip().split(delimiters))
+    
+    # file specified
+    if read_from_file:
+        # read the file line by line
+        with open(args.filepath, "r") as fh:
+            for line in fh:
+                splitted_lines.append(line.strip().split(delimiter))
+    else:
+        # no file specified
+        splitted_lines = [x.strip().split(delimiter) for x in data.split("\n")]
     
     # no field specified
     if fields == None:
